@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Room Flat in Ripa di Porta Ticinese, Milan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Terracotta Accent -->
+    <!-- Application Structure Plan: A single-page application using a tabbed navigation system ('Overview', 'Features', 'Location', 'Mortgage'). This structure was chosen over a long scroll to allow users to directly access the information most relevant to them (e.g., photos/overview, specific features, location context, or financial details), enhancing usability. Key interactions include tab switching and an interactive mortgage cost simulation chart. -->
+    <!-- Visualization & Content Choices: Key property stats are presented in a high-visibility bar with icons for quick scanning. Features are shown as a checklist with icons for better readability. The mortgage calculator uses a dynamic pie chart for simulating costs. Energy performance is visualized with a custom gauge. This comprehensive approach supports the goal of turning a static report into an explorable financial analysis tool. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-button.active {
+            color: #C05621;
+            border-bottom-color: #C05621;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .icon-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .icon-list .icon {
+            color: #C05621;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+            width: 24px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Two-Room Flat with Naviglio Grande View</h1>
+            <p class="text-lg text-gray-500 mt-2">Ripa di Porta Ticinese, 101, Navigli - Porta Genova, Milan</p>
+        </header>
+
+        <main>
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="md:col-span-2 h-64 md:h-96 rounded-lg overflow-hidden">
+                        <img src="https://www.idealista.it/en/immobile/33154826/foto/1/" alt="Main property image" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x384/E0E0E0/808080?text=Main+Image+Unavailable';" />
+                    </div>
+                    <div class="space-y-4">
+                        <div class="h-28 md:h-[114px] rounded-lg overflow-hidden">
+                            <img src="https://www.idealista.it/en/immobile/33154826/foto/2/" alt="Property gallery image 2" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x114/E0E0E0/808080?text=Photo+2+Unavailable';" />
+                        </div>
+                        <div class="h-28 md:h-[114px] rounded-lg overflow-hidden">
+                            <img src="https://placehold.co/150x114/E0E0E0/808080?text=Photo+3" alt="Property gallery image 3" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x114/E0E0E0/808080?text=Photo+3+Unavailable';" />
+                        </div>
+                        <div class="h-28 md:h-[114px] rounded-lg overflow-hidden">
+                            <img src="https://placehold.co/150x114/E0E0E0/808080?text=Photo+4" alt="Property gallery image 4" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x114/E0E0E0/808080?text=Photo+4+Unavailable';" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                    <div>
+                        <p class="text-4xl font-bold text-gray-900">€ 360,000</p>
+                        <p class="text-gray-600">Apartment | Excellent condition</p>
+                    </div>
+                    <div class="flex space-x-6 mt-4 md:mt-0 text-center">
+                        <div>
+                            <span class="text-2xl font-bold" id="propertySizeDisplay">55</span>
+                            <span class="text-sm text-gray-500 block">m²</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold">2</span>
+                            <span class="text-sm text-gray-500 block">Rooms</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold">1</span>
+                            <span class="text-sm text-gray-500 block">Bathroom</span>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-bold">3rd</span>
+                            <span class="text-sm text-gray-500 block">Floor</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="flex space-x-6 -mb-px" id="tab-nav">
+                        <button class="tab-button active py-4 px-1 text-base font-medium" data-tab="overview">Overview</button>
+                        <button class="tab-button py-4 px-1 text-base font-medium text-gray-500 hover:text-gray-700" data-tab="features">Features</button>
+                        <button class="tab-button py-4 px-1 text-base font-medium text-gray-500 hover:text-gray-700" data-tab="location">Location</button>
+                        <button class="tab-button py-4 px-1 text-base font-medium text-gray-500 hover:text-gray-700" data-tab="mortgage">Mortgage</button>
+                    </nav>
+                </div>
+
+                <div id="tab-contents">
+                    <div id="overview" class="tab-content active animate-fade-in">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">A Gem in the Heart of Navigli</h2>
+                        <div class="space-y-4 text-gray-700 leading-relaxed">
+                            <p>Discover this delightful two-room apartment, strategically located on Ripa di Porta Ticinese, offering a panoramic view of the iconic Naviglio Grande. Situated on the third floor of an elegant, recently renovated period building, this flat presents a superb opportunity for those seeking a stylish home or a smart investment in one of Milan's most vibrant and sought-after districts.</p>
+                            <h3 class="text-xl font-semibold text-gray-800 pt-4">Excellent Investment Potential</h3>
+                            <p>This property is considered an "excellent investment." Its privileged location, combined with impeccable condition and complete renovation, makes it extremely attractive for various buyer profiles: students (given the proximity to IULM and Bocconi universities), young professionals, and investors aiming for a steady rental income, given the high demand in this characteristic Milanese neighborhood.</p>
+                        </div>
+                    </div>
+
+                    <div id="features" class="tab-content">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Internal Features</h3>
+                                <ul class="icon-list">
+                                    <li><span class="icon">🌬️</span>Efficient air conditioning</li>
+                                    <li><span class="icon">🖼️</span>Double-glazed windows for insulation</li>
+                                    <li><span class="icon">🚪</span>Custom-made built-in wardrobes</li>
+                                    <li><span class="icon">🍳</span>Furnished and equipped kitchen</li>
+                                    <li><span class="icon">🌡️</span>Independent heating system</li>
+                                    <li><span class="icon">☀️</span>South orientation for maximum brightness</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Building Information</h3>
+                                 <ul class="icon-list">
+                                    <li><span class="icon">🏢</span>Elegant "ringhiera" period building</li>
+                                    <li><span class="icon">✨</span>Recently renovated building</li>
+                                    <li><span class="icon">🛗</span>Elevator present</li>
+                                    <li><span class="icon">🌳</span>No private garden</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="location" class="tab-content">
+                         <h2 class="text-2xl font-bold text-gray-800 mb-4">Experience the Charm of Navigli</h2>
+                         <p class="text-gray-700 leading-relaxed mb-6">The address, Ripa di Porta Ticinese 101, places this apartment in the pulsating heart of the highly sought-after Navigli - Porta Genova district. This area is renowned for its picturesque canals, lively nightlife, artistic atmosphere, and an abundance of dining options. Its proximity to the Darsena, Corso San Gottardo, and the prestigious IULM and Bocconi universities makes it ideal for both students and professionals.</p>
+                         <h3 class="text-xl font-semibold text-gray-800 mb-4">Connections and Services</h3>
+                         <p class="text-gray-700 mb-6">Public transport connectivity is excellent, with the MM Porta Genova (Metro) station just a short walk away, as well as convenient tram and bus lines ensuring easy access to every part of the city.</p>
+                         <div class="mt-8">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Location Map</h3>
+                            <div class="w-full h-64 md:h-96 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
+                                <img src="https://placehold.co/800x600/E0E0E0/808080?text=Map+of+Navigli+Area" alt="Map of Navigli area" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E0E0E0/808080?text=Map+Unavailable';" />
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2 text-center">Approximate location of the property in the Navigli district.</p>
+                         </div>
+                    </div>
+
+                    <div id="mortgage" class="tab-content">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Mortgage Cost Analysis</h3>
+                                <p class="mb-4">Simulate monthly mortgage costs for this property. Adjust the loan amount, interest rate, and loan term to see how the payment changes.</p>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="propertyValue" class="block text-sm font-medium text-gray-700">Property Value (€)</label>
+                                        <input type="text" id="propertyValue" value="360.000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-right">
+                                    </div>
+                                    <div>
+                                        <label for="downPayment" class="block text-sm font-medium text-gray-700">Down Payment (€)</label>
+                                        <input type="text" id="downPayment" value="72.000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-right">
+                                    </div>
+                                    <div>
+                                        <label for="interestRate" class="block text-sm font-medium text-gray-700">Interest Rate (%)</label>
+                                        <input type="number" id="interestRate" value="3.5" step="0.1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-right">
+                                    </div>
+                                    <div>
+                                        <label for="loanTerm" class="block text-sm font-medium text-gray-700">Loan Term (Years)</label>
+                                        <input type="number" id="loanTerm" value="25" step="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-right">
+                                    </div>
+                                </div>
+                                <div id="mortgageResult" class="mt-6 text-center">
+                                    <p class="text-lg">Estimated Monthly Payment:</p>
+                                    <p class="text-3xl font-bold text-gray-900" id="monthlyPayment">€ 1.275</p>
+                                    <p class="text-sm text-gray-600 mt-2">Loan-to-Value (LTV): <span id="ltv">80%</span></p>
+                                    <p class="text-sm text-gray-600">Total Loan Amount: <span id="totalLoanAmount">€ 288.000</span></p>
+                                    <p class="text-sm text-gray-600">Total Paid (Principal + Interest): <span id="totalPaid">€ 382.500</span></p>
+                                    <p class="text-sm text-gray-600">Total Interest Paid: <span id="totalInterest">€ 94.500</span></p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="chart-container">
+                                    <canvas id="mortgageChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-12 border-t pt-8">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Energy Performance</h3>
+                             <div class="flex items-center space-x-4">
+                                <p class="text-5xl font-bold" style="color: #FF5722;">F</p>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div class="bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 h-4 rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mt-2">Consumption: 175 kWh/m² year</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="text-center text-gray-400 mt-12 text-sm">
+            <p>The information presented is for illustrative purposes only.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                    
+                    // Trigger recalculation when tabs are switched to ensure data consistency
+                    if (tab.dataset.tab === 'mortgage') { // Changed from 'financials'
+                        calculateMortgageAndRender();
+                    } 
+                    // No cashflow tab to update anymore
+                });
+            });
+
+            // --- Global Helper Functions ---
+            const formatNumberWithDots = (num) => {
+                if (typeof num !== 'number' || isNaN(num)) return '';
+                return num.toLocaleString('it-IT', { minimumFractionDigits: 0, maximumFractionDigits: 0, useGrouping: true });
+            };
+
+            const unformatNumber = (str) => {
+                if (typeof str !== 'string') return parseFloat(str);
+                return parseFloat(str.replace(/\./g, '').replace(/,/g, '.'));
+            };
+
+            // --- Mortgage Calculator Logic ---
+            let mortgageChart;
+            const ctxMortgage = document.getElementById('mortgageChart').getContext('2d');
+            
+            const propertyValueInput = document.getElementById('propertyValue');
+            const downPaymentInput = document.getElementById('downPayment');
+            const interestRateInput = document.getElementById('interestRate');
+            const loanTermInput = document.getElementById('loanTerm');
+            const monthlyPaymentEl = document.getElementById('monthlyPayment'); 
+
+            const calculateMortgageAndRender = () => {
+                const propertyValue = unformatNumber(propertyValueInput.value);
+                const downPayment = unformatNumber(downPaymentInput.value);
+                const interestRate = parseFloat(interestRateInput.value) / 100;
+                const loanTermYears = parseInt(loanTermInput.value);
+                
+                const loanAmount = propertyValue - downPayment; 
+                const ltvEl = document.getElementById('ltv');
+                const totalLoanAmountEl = document.getElementById('totalLoanAmount');
+                const totalPaidEl = document.getElementById('totalPaid');
+                const totalInterestEl = document.getElementById('totalInterest');
+
+                const numberOfPayments = loanTermYears * 12;
+                const monthlyInterestRate = interestRate / 12;
+
+                if (isNaN(propertyValue) || isNaN(downPayment) || isNaN(interestRate) || isNaN(loanTermYears) || 
+                    propertyValue <= 0 || downPayment < 0 || interestRate < 0 || loanTermYears <= 0 ||
+                    downPayment > propertyValue) {
+                    monthlyPaymentEl.textContent = 'Invalid Data';
+                    ltvEl.textContent = 'N/A';
+                    totalLoanAmountEl.textContent = 'N/A';
+                    totalPaidEl.textContent = 'N/A';
+                    totalInterestEl.textContent = 'N/A';
+                    if (mortgageChart) mortgageChart.destroy();
+                    return;
+                }
+
+                let monthlyPayment;
+                if (monthlyInterestRate === 0) {
+                    monthlyPayment = loanAmount / numberOfPayments;
+                } else {
+                    monthlyPayment = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+                }
+                
+                const totalPayment = monthlyPayment * numberOfPayments;
+                const totalInterest = totalPayment - loanAmount;
+                const ltv = (loanAmount / propertyValue) * 100;
+
+                monthlyPaymentEl.textContent = `€ ${formatNumberWithDots(monthlyPayment)}`;
+                ltvEl.textContent = `${ltv.toFixed(0)}%`;
+                totalLoanAmountEl.textContent = `€ ${formatNumberWithDots(loanAmount)}`;
+                totalPaidEl.textContent = `€ ${formatNumberWithDots(totalPayment)}`;
+                totalInterestEl.textContent = `€ ${formatNumberWithDots(totalInterest)}`;
+
+
+                if (mortgageChart) {
+                    mortgageChart.destroy();
+                }
+
+                mortgageChart = new Chart(ctxMortgage, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Principal', 'Interest'],
+                        datasets: [{
+                            data: [loanAmount, totalInterest],
+                            backgroundColor: ['#4A4A4A', '#C05621'],
+                            borderColor: '#FDFBF8',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0, useGrouping: true }).format(context.parsed);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '60%'
+                    }
+                });
+            };
+
+            propertyValueInput.addEventListener('input', calculateMortgageAndRender);
+            propertyValueInput.addEventListener('focus', () => { propertyValueInput.value = unformatNumber(propertyValueInput.value); });
+            propertyValueInput.addEventListener('blur', () => { propertyValueInput.value = formatNumberWithDots(unformatNumber(propertyValueInput.value)); });
+
+            downPaymentInput.addEventListener('input', calculateMortgageAndRender);
+            downPaymentInput.addEventListener('focus', () => { downPaymentInput.value = unformatNumber(downPaymentInput.value); });
+            downPaymentInput.addEventListener('blur', () => { downPaymentInput.value = formatNumberWithDots(unformatNumber(downPaymentInput.value)); });
+
+            interestRateInput.addEventListener('input', calculateMortgageAndRender);
+            loanTermInput.addEventListener('input', calculateMortgageAndRender);
+            
+            calculateMortgageAndRender();
+            propertyValueInput.value = formatNumberWithDots(unformatNumber(propertyValueInput.value));
+            downPaymentInput.value = formatNumberWithDots(unformatNumber(downPaymentInput.value));
+        });
+    </script>
+</body>
+</html>
